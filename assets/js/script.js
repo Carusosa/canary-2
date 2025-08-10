@@ -1,5 +1,24 @@
 // Smooth scrolling for navigation links
 document.addEventListener('DOMContentLoaded', function() {
+    // Light/Dark mode toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = themeToggle ? themeToggle.querySelector('.theme-icon') : null;
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+        document.body.classList.add('dark');
+        if (themeIcon) themeIcon.textContent = '☀️';
+    } else {
+        if (themeIcon) themeIcon.textContent = '🌙';
+    }
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            if (themeIcon) themeIcon.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    }
     // Handle navigation clicks
     const navLinks = document.querySelectorAll('.nav-tab[href^="#"]');
     navLinks.forEach(link => {
@@ -77,11 +96,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Navbar background on scroll
     const navbar = document.querySelector('.navbar');
     window.addEventListener('scroll', function() {
+        navbar.style.background = getComputedStyle(document.body).getPropertyValue('--navbar-bg');
         if (window.scrollY > 50) {
-            navbar.style.background = 'rgba(248, 247, 244, 0.98)';
             navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
         } else {
-            navbar.style.background = 'rgba(248, 247, 244, 0.95)';
             navbar.style.boxShadow = 'none';
         }
     });
